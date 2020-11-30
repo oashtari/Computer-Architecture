@@ -1,0 +1,10 @@
+# OBJECTIVE type "python3 compy.py prog1" to have it run this file
+
+1 # PRINT_BEEJ
+3 # SAVE_REG R1, 37 r[1] = 37
+1 # R1
+37
+4 # PRINT_REG R1 print(r[1]0 
+1 # R1
+1 # PRINT_BEEJ
+2 # HALT
