@@ -2,17 +2,24 @@
 
 import sys
 
+
+# if len(sys.argv) != 2:
+#     print("USAGE: cpu.py program_name")
+#     sys.exit(1)
+
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0] * 256
+        self.reg = [0] * 8
+        self.pc = 0
 
     def load(self):
         """Load a program into memory."""
 
-        address = 0
+        # address = 0
 
         # For now, we've just hardcoded a program:
 
@@ -29,6 +36,12 @@ class CPU:
         for instruction in program:
             self.ram[address] = instruction
             address += 1
+
+    def ram_read(self, memory_address_register):
+        return self.ram[memory_address_register]
+
+    def ram_write(self, memory_address_register, memory_data_register):
+        self.ram[memory_address_register] = memory_data_register
 
 
     def alu(self, op, reg_a, reg_b):
@@ -62,4 +75,27 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        ldi = 0b10000010
+        prn = 0b01000111
+        hlt = 0b00000001
+
+        self.load()
+
+        halt = False
+
+        while halt is not True:
+            instruction = self.ram_read(self.pc)
+
+            if instruction == hlt or self.pc > 10:
+                halt = True
+            
+            elif instruction == ldi:
+                self.reg[self.ram_read(self.pc+1)] = self.ram_read(self.pc+2)
+                self.pc += 3
+
+            elif instruction == prn:
+                print(self.reg[self.ram_read(self.pc+1)])
+                self.pc += 2
+
+            else:
+                return print(f'Instruction {instruction} not found at {self.pc}')
