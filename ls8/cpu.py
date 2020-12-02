@@ -19,7 +19,7 @@ class CPU:
     def load(self):
         """Load a program into memory."""
 
-        # address = 0
+        address = 0
 
         # For now, we've just hardcoded a program:
 
