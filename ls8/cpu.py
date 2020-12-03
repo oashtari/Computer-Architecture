@@ -75,7 +75,7 @@ class CPU:
 
         elif op == "DIV":
             self.reg[reg_a] /= self.reg[reg_b]
-            
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -104,6 +104,7 @@ class CPU:
         ldi = 0b10000010
         prn = 0b01000111
         hlt = 0b00000001
+        mul = 0b10100010
 
         self.load()
 
@@ -122,6 +123,10 @@ class CPU:
             elif instruction == prn:
                 print(self.reg[self.ram_read(self.pc+1)])
                 self.pc += 2
+
+            elif instruction == mul:
+                self.alu('MUL', self.ram_read(self.pc+=1), self.ram_read(self.pc+=2))
+                self.pc += 3
 
             else:
                 return print(f'Instruction {instruction} not found at {self.pc}')
