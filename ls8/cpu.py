@@ -2,11 +2,6 @@
 
 import sys
 
-
-# if len(sys.argv) != 2:
-#     print("USAGE: cpu.py program_name")
-#     sys.exit(1)
-
 class CPU:
     """Main CPU class."""
 
@@ -16,12 +11,14 @@ class CPU:
         self.reg = [0] * 8
         self.pc = 0
 
-    def load(self):
+
+
+    def load(self, program_filename):
         """Load a program into memory."""
 
         address = 0
-
-
+        
+        # OLD CODE
         # # For now, we've just hardcoded a program:
 
         # program = [
@@ -35,24 +32,29 @@ class CPU:
         # ]
         program = []
 
-        with open(sys.argv[1]) as f:
+        with open(program_filename) as f:
+            print('loaded', program_filename)
             for line in f:
                 line = line.strip()
 
                 if line == '' or line[0] == '#':
+                    # print('will it continue')
                     continue
 
                 try:
                     str_value = line.split('#')[0]
-                    value = int(str_value)
+                    self.ram[address] = int(str_value,2)
+                    address +=1
+
 
                 except ValueError:
                     print(f'Invalie number: {str_value}')
 
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        # for instruction in program:
+        #     print('ram instruction', instruction)
+        #     self.ram[address] = instruction
+        #     address += 1
 
     def ram_read(self, memory_address_register):
         return self.ram[memory_address_register]
@@ -106,27 +108,42 @@ class CPU:
         hlt = 0b00000001
         mul = 0b10100010
 
-        self.load()
+        # self.load()
 
         halt = False
 
         while halt is not True:
             instruction = self.ram_read(self.pc)
+            # print('intitial instruction', instruction)
 
             if instruction == hlt or self.pc > 10:
                 halt = True
+                # print('HLT')
             
             elif instruction == ldi:
+                # print('LDI')
                 self.reg[self.ram_read(self.pc+1)] = self.ram_read(self.pc+2)
                 self.pc += 3
 
             elif instruction == prn:
+                # print('PRN')
                 print(self.reg[self.ram_read(self.pc+1)])
                 self.pc += 2
 
             elif instruction == mul:
-                self.alu('MUL', self.ram_read(self.pc+=1), self.ram_read(self.pc+=2))
+                # print('MUL')
+                self.alu('MUL', self.ram_read(self.pc+1), self.ram_read(self.pc+2))
                 self.pc += 3
 
             else:
                 return print(f'Instruction {instruction} not found at {self.pc}')
+
+        #     program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
