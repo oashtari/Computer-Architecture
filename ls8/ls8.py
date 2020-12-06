@@ -5,9 +5,9 @@
 import sys
 from cpu import *
 
-program_filename = sys.argv[1]
+# program_filename = sys.argv[1]
 
 cpu = CPU()
 
-cpu.load(program_filename)
+cpu.load()
 cpu.run()

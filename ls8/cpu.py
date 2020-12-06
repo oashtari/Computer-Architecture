@@ -4,12 +4,14 @@ import sys
 
 class CPU:
     """Main CPU class."""
-
+    
     def __init__(self):
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0
+        self.reg[7] = 0xF4
+        self.pc_jump = 0
         self.commands = {
             0b10000010: self.ldi,
             0b01000111: self.prn,
@@ -17,15 +19,16 @@ class CPU:
             0b10100001: self.sub,
             0b10100010: self.mul,
             0b10100011: self.div,
+            0b01000101: self.push,
+            0b01000110: self.pop
         }
 
 
 
-    def load(self, program_filename):
+    def load(self):
         """Load a program into memory."""
 
         address = 0
-        
         # OLD CODE
         # # For now, we've just hardcoded a program:
 
@@ -40,29 +43,40 @@ class CPU:
         # ]
         program = []
 
-        with open(program_filename) as f:
-            print('loaded', program_filename)
-            for line in f:
-                line = line.strip()
+        if len(sys.argv) == 2:
+            try:
+                with open(sys.argv[1]) as f:
+                    print('loaded', sys.argv[1])
+                    for line in f:
+                        line = line.strip()
 
-                if line == '' or line[0] == '#':
-                    # print('will it continue')
-                    continue
+                        if line == '' or line[0] == '#':
+                            # print('will it continue')
+                            continue
 
-                try:
-                    str_value = line.split('#')[0]
-                    self.ram[address] = int(str_value,2)
-                    address +=1
+                        try:
+                            str_value = line.split('#')[0]
+                            self.ram[address] = int(str_value,2)
+                            address +=1
+
+                        except ValueError:
+                            print(f'Invalid number: {str_value}')
+                
+
+            except FileNotFoundError as error:
+                print(error)
+            print('THE PROGRAM', self.ram[13])
+        
+            # for instruction in program:
+            #     print('ram instruction', instruction)
+            #     self.ram[address] = instruction
+            #     address += 1
+
+        else:
+            print(f'Error from {sys.argv[0]}: {sys.argv[1]} not found')
+            print("(Did you double check the file name?)")
 
 
-                except ValueError:
-                    print(f'Invalid number: {str_value}')
-
-
-        # for instruction in program:
-        #     print('ram instruction', instruction)
-        #     self.ram[address] = instruction
-        #     address += 1
 
     def ram_read(self, memory_address_register):
         return self.ram[memory_address_register]
@@ -117,6 +131,49 @@ class CPU:
             print(self.reg[self.ram_read(self.pc+1)])
             self.pc += 2
 
+    def push(self, address = None):
+        self.reg[7] -= 1
+
+        reg_num = self.ram[self.pc + 1]
+        value = self.reg[reg_num]
+
+        top_of_stack_addr = self.reg[7]
+        self.ram[top_of_stack_addr] = value 
+
+        self.pc +=2
+        # if address is None:
+        #     self.reg[7] -= 1
+        #     self.ram_write(self.reg[7], self.reg[self.ram_read(self.pc+1)])
+        # else:
+        #     self.reg[7] -= 1
+        #     self.ram_write(self.reg[7], address)
+
+    def pop(self):
+
+        top_of_stack_addr = self.reg[7]
+        print('top of', top_of_stack_addr)
+        value = self.ram[top_of_stack_addr]
+        print('value from ram', value)
+
+        reg_num = self.ram[pc+1]
+        print('reg num', reg_num)
+        self.reg[reg_num] = value
+        print('assignment', self.reg[reg_num])
+
+        print('pre pointer', self.reg[7])
+        self.reg[7] += 1
+        print('post pointer', self.reg[7])
+
+        self.pc += 2
+        # if self.reg[7] == 0xF4:
+        #     return print('Stack is empty.')
+        # if ret:
+        #     pc = self.ram_read(self.reg[7])
+        #     self.reg[7] += 1
+        #     return pc
+        # self.reg[self.ram_read(self.pc+1)] = self.ram_read(self.reg[7])
+        # self.reg[7] += 1
+
     def add(self):
         self.aluRun('ADD')
 
@@ -135,10 +192,12 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        ldi = 0b10000010
-        prn = 0b01000111
-        hlt = 0b00000001
-        mul = 0b10100010
+        # ldi = 0b10000010
+        # prn = 0b01000111
+        # hlt = 0b00000001
+        # mul = 0b10100010
+        # push = 0b01000101
+        # pop = 0b01000110
 
         # self.load()
 
@@ -147,10 +206,14 @@ class CPU:
         # while halt is not True:
         while self.ram_read(self.pc) != 0b00000001:
             instruction = self.ram_read(self.pc)
-            # print('intitial instruction', instruction)
+            print('intitial instruction', instruction)
+            print('inst pc spot', self.pc)
+            print('pointer', self.reg[7])
 
             try: 
                 self.commands[instruction]()
+                print('pointer moved?', self.reg[7])
+
 
             # if instruction == hlt or self.pc > 10:
             #     halt = True
@@ -173,13 +236,3 @@ class CPU:
 
             except Exception:
                 return print(f'Instruction {instruction} not found at {self.pc}')
-
-        #     program = [
-        #     # From print8.ls8
-        #     0b10000010, # LDI R0,8
-        #     0b00000000,
-        #     0b00001000,
-        #     0b01000111, # PRN R0
-        #     0b00000000,
-        #     0b00000001, # HLT
-        # ]
