@@ -20,7 +20,9 @@ class CPU:
             0b10100010: self.mul,
             0b10100011: self.div,
             0b01000101: self.push,
-            0b01000110: self.pop
+            0b01000110: self.pop, 
+            0b01010000: self.call,
+            0b00010001: self.ret
         }
 
 
@@ -174,6 +176,29 @@ class CPU:
         #     return pc
         # self.reg[self.ram_read(self.pc+1)] = self.ram_read(self.reg[7])
         # self.reg[7] += 1
+
+    def call(self):
+        return_addr = self.pc + 2
+
+        self.reg[7] -= 1
+
+        top_of_stack_addr = self.reg[7]
+        self.ram[top_of_stack_addr] = return_addr
+
+        reg_num = self.ram[self.pc + 1]
+        subroutine_addr = self.reg[reg_num]
+
+        self.pc = subroutine_addr 
+
+    def ret(self):
+        top_of_stack_addr = self.reg[7]
+        value = self.ram[top_of_stack_addr]
+
+        self.reg[7] += 1
+
+        return_addr = value
+
+        self.pc = return_addr
 
     def add(self):
         self.aluRun('ADD')
