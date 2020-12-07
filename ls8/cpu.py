@@ -151,18 +151,19 @@ class CPU:
     def pop(self):
 
         top_of_stack_addr = self.reg[7]
-        print('top of', top_of_stack_addr)
+        # print('top of', top_of_stack_addr)
         value = self.ram[top_of_stack_addr]
-        print('value from ram', value)
+        # print('value from ram', value)
+        # print('anything')
 
-        reg_num = self.ram[pc+1]
-        print('reg num', reg_num)
+        reg_num = self.ram[self.pc+1]
+        # print('reg num', reg_num)
         self.reg[reg_num] = value
-        print('assignment', self.reg[reg_num])
+        # print('assignment', self.reg[reg_num])
 
-        print('pre pointer', self.reg[7])
+        # print('pre pointer', self.reg[7])
         self.reg[7] += 1
-        print('post pointer', self.reg[7])
+        # print('post pointer', self.reg[7])
 
         self.pc += 2
         # if self.reg[7] == 0xF4:
@@ -206,14 +207,16 @@ class CPU:
         # while halt is not True:
         while self.ram_read(self.pc) != 0b00000001:
             instruction = self.ram_read(self.pc)
-            print('intitial instruction', instruction)
-            print('inst pc spot', self.pc)
-            print('pointer', self.reg[7])
+            # print('intitial instruction', instruction)
+            # print('inst pc spot', self.pc)
+            # print('pointer', self.reg[7])
 
             try: 
                 self.commands[instruction]()
-                print('pointer moved?', self.reg[7])
+                # print('pointer moved?', self.reg[7])
 
+            except Exception:
+                return print(f'Instruction {instruction} not found at {self.pc}')
 
             # if instruction == hlt or self.pc > 10:
             #     halt = True
@@ -233,6 +236,3 @@ class CPU:
             #     # print('MUL')
             #     # self.alu('MUL', self.ram_read(self.pc+1), self.ram_read(self.pc+2))
             #     # self.pc += 3
-
-            except Exception:
-                return print(f'Instruction {instruction} not found at {self.pc}')
