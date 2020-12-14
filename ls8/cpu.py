@@ -17,10 +17,10 @@ class CPU:
         self.commands = {
             0b10000010: self.ldi,
             0b01000111: self.prn,
-            # 0b10100000: self.add,
-            # 0b10100001: self.sub,
-            # 0b10100010: self.mul,
-            # 0b10100011: self.div,
+            0b10100000: self.add,
+            0b10100001: self.sub,
+            0b10100010: self.mul,
+            0b10100011: self.div,
             0b01000101: self.push,
             0b01000110: self.pop, 
             0b01010000: self.call,
@@ -103,108 +103,115 @@ class CPU:
     def alu(self, op, reg_a, reg_b=None):
         """ALU operations."""
 
-        def add():
+        if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-
-        def sub():
+            
+        elif op == "SUB":
             self.reg[reg_a] -= self.reg[reg_b]
 
-        def mul():
+        elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
 
-        def div():
+        elif op == "DIV":
             self.reg[reg_a] /= self.reg[reg_b]
-        
-        def mod():
+
+        elif op == "MOD":
             self.reg[reg_a] %= self.reg[reg_b]
 
-        def inc():
-            self.reg[reg_a] += 1
-
-        def dec():
-            self.reg[reg_a] -= 1
-
-        def band():
+        elif op == "BAND":
             self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
 
-        def bor():
+        elif op == "BOR":
             self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
 
-        def bxor():
+        elif op == "BXOR":
             self.reg[reg_a] = self.reg[reg_a] ^ self.reg[reg_b]
 
-        def bnot():
+        elif op == "BNOT":
             self.reg[reg_a] = ~self.reg[reg_a] 
 
-        def shl():
+        elif op == "SHL":
             self.reg[reg_a] = self.reg[reg_a] << self.reg[reg_b]
 
-        def shr():
+        elif op == "SHR":
             self.reg[reg_a] = self.reg[reg_a] >> self.reg[reg_b]
 
-        operations = {
-            0b10100000: add,
-            0b10100001: sub,
-            0b10100010: mul,
-            0b10100011: div,
-            0b01000101: push,
-            0b01000110: pop, 
-            0b01010000: call,
-            0b00010001: ret, 
-            0b10100111: cmp,
-            0b01010100: jmp,
-            0b01010101: jeq,
-            0b01010110: jne,
-            0b10101000: band,
-            0b10101010: bor, 
-            0b10101011: bxor, 
-            0b01101001: bnot, 
-            0b10101100: shl,
-            0b10101101: shr, 
-            0b10100100: mod,
-            0b01100101: inc,
-            0b01100110: dec,
-        }
+        else:
+            raise Exception('this ALU not supported')
 
-        # if op == "ADD":
+        # reg_a = self.reg[self.ram_read(self.pc+1)] 
+        # reg_b = self.reg[self.ram_read(self.pc+2)]
+
+        # def add():
         #     self.reg[reg_a] += self.reg[reg_b]
-            
-        # elif op == "SUB":
+
+        # def sub():
         #     self.reg[reg_a] -= self.reg[reg_b]
 
-        # elif op == "MUL":
-        #     self.reg[reg_a] *= self.reg[reg_b]
+        # def mul():
+        #     reg_a *= reg_b
 
-        # elif op == "DIV":
+        # def div():
         #     self.reg[reg_a] /= self.reg[reg_b]
-
-        # elif op == "MOD":
+        
+        # def mod():
         #     self.reg[reg_a] %= self.reg[reg_b]
 
-        # elif op == "BAND":
+        # def inc():
+        #     self.reg[reg_a] += 1
+
+        # def dec():
+        #     self.reg[reg_a] -= 1
+
+        # def band():
         #     self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
 
-        # elif op == "BOR":
+        # def bor():
         #     self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
 
-        # elif op == "BXOR":
+        # def bxor():
         #     self.reg[reg_a] = self.reg[reg_a] ^ self.reg[reg_b]
 
-        # elif op == "BNOT":
+        # def bnot():
         #     self.reg[reg_a] = ~self.reg[reg_a] 
 
-        # elif op == "SHL":
+        # def shl():
         #     self.reg[reg_a] = self.reg[reg_a] << self.reg[reg_b]
 
-        # elif op == "SHR":
+        # def shr():
         #     self.reg[reg_a] = self.reg[reg_a] >> self.reg[reg_b]
 
-        try: 
-            operations[op]
-        # else:
-        #     raise Exception("Unsupported ALU operation")
-        except KeyError:
-            print("Unsupported ALU operation")
+        # operations = {
+        #     0b10100000: add,
+        #     0b10100001: sub,
+        #     0b10100010: mul,
+        #     0b10100011: div,
+        #     0b01000101: push,
+        #     0b01000110: pop, 
+        #     0b01010000: call,
+        #     0b00010001: ret, 
+        #     0b10100111: cmp,
+        #     0b01010100: jmp,
+        #     0b01010101: jeq,
+        #     0b01010110: jne,
+        #     0b10101000: band,
+        #     0b10101010: bor, 
+        #     0b10101011: bxor, 
+        #     0b01101001: bnot, 
+        #     0b10101100: shl,
+        #     0b10101101: shr, 
+        #     0b10100100: mod,
+        #     0b01100101: inc,
+        #     0b01100110: dec,
+        # }
+
+
+        # try: 
+        #     operations[op]
+        # # else:
+        # #     raise Exception("Unsupported ALU operation")
+        # except KeyError:
+        #     print("Unsupported ALU operation")
 
     def trace(self):
         """
@@ -304,43 +311,27 @@ class CPU:
     def cmp(self):
         reg_a = self.reg[self.ram_read(self.pc+1)] 
         reg_b = self.reg[self.ram_read(self.pc+2)]
-        # print('reg a', reg_a)
-        # print('reg b', reg_b)
         
         if reg_a < reg_b:
-            # print('comp L working?')
-            # print('pre L flag', self.fl)
             self.fl = 0b00000100
-            # print('post L flag', self.fl)
         elif reg_a > reg_b:
-            # print('comp G working?')
-            # print('pre G flag', self.fl)
             self.fl = 0b00000010
-            # print('post G flag', self.fl)
         else:
             self.fl = 0b00000001
         self.pc +=3
 
     def jmp(self):
         go_to = self.reg[self.ram_read(self.pc + 1)]
-        # print('we jumping', go_to)
-        # print('pc jump', self.pc)
 
         self.pc = go_to
-
-        # print('pc jump 2', self.pc)
-
-        # self.pc +=2
     
     def jeq(self):
-        # print('JEQ')
         if self.fl == 0b001:
             self.jmp()
         else:
             self.pc +=2
 
     def jne(self):
-        # print('JNE')
         if self.fl > 1 or self.fl == 0b000: #  self.fl >1 or 
             self.jmp()
         else: 
@@ -358,17 +349,21 @@ class CPU:
     def jlt(self):
         pass
 
-    # def add(self):
-    #     self.aluRun('ADD')
+    def add(self):
+        self.aluRun('ADD')
 
-    # def sub(self):
-    #     self.aluRun('SUB')
+    def sub(self):
+        self.aluRun('SUB')
 
-    # def mul(self):
-    #     self.aluRun('MUL')
+    def mul(self):
+        self.aluRun('MUL')
+        # reg_a = self.reg[self.ram_read(self.pc+1)] 
+        # reg_b = self.reg[self.ram_read(self.pc+2)]
+        # reg_a *= reg_b
+        # self.alu('MUL', reg_a, reg_b)
 
-    # def div(self):
-    #     self.aluRun('DIV')
+    def div(self):
+        self.aluRun('DIV')
     
     # def mod(self):
     #     self.aluRun('MOD')
@@ -397,20 +392,21 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        # ldi = 0b10000010
-        # prn = 0b01000111
-        # hlt = 0b00000001
-        # mul = 0b10100010
-        # push = 0b01000101
-        # pop = 0b01000110
+        ldi = 0b10000010
+        prn = 0b01000111
+        hlt = 0b00000001
+        mul = 0b10100010
+        push = 0b01000101
+        pop = 0b01000110
 
         # self.load()
 
-        halt = False
+        # halt = False
 
         # while halt is not True:
         while self.ram_read(self.pc) != 0b00000001:
             instruction = self.ram_read(self.pc)
+            # print('run inst', instruction)
             # print('intitial instruction', instruction)
             # print('inst pc spot', self.pc)
             # print('pointer', self.reg[7])
