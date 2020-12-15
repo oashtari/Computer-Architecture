@@ -65,6 +65,10 @@ but you'll have to implement those three above instructions first!
 * Read this whole file.
 * Skim the spec.
 
+FILES:
+_CALL.LS8_
+
+
 ## Step 1: Add the constructor to `cpu.py`
 
 Add list properties to the `CPU` class to hold 256 bytes of memory and 8
